@@ -35,25 +35,29 @@ def test_func(opt, sa_client, user_client, target_user, test_folder, scopes):
     try:
         target_user_created_file = creates_file_at_the_specified_client(user_client, test_folder.id)
     except Exception as e:
-        result["result"] = "Unknown(target_user can't create a file to target_user test folder."
-        result["note"]["error"] = str(e)
+        result["result_text"] = "Unknown(target_user can't create a file to target_user test folder."
+        result["result"] = False
+        result["error"] = str(e)
         return result
 
     try:
         downscope_client = get_downscope_client(opt, user_client, target_user, target_user_created_file, scopes)
     except Exception as e:
-        result["result"] = "NG"
-        result["note"]["error"] = str(e)
+        result["result_text"] = "NG"
+        result["result"] = False
+        result["error"] = str(e)
         return result
 
     # The target user downscopes the client and downloads the created file.
     try:
         content = downscope_client.file(target_user_created_file.id).content()
-        result["result"] = "SUCCESS"
+        result["result_text"] = "SUCCESS"
+        result["result"] = True
         result["note"]["content"] = content.decode('utf-8')
     except Exception as e:
-        result["result"] = "NG"
-        result["note"]["error"] = str(e)
+        result["result_text"] = "NG"
+        result["result"] = False
+        result["error"] = str(e)
         return result
 
     # Destroy created file

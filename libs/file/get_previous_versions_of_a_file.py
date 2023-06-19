@@ -41,26 +41,29 @@ def test_func(opt, sa_client:Client, user_client:Client, target_user:User, test_
 
 
     except Exception as e:
-        result["result"] = "Unknown(target_user can't create a file to target_user root folder."
-        result["note"]["error"] = str(e)
+        result["result_text"] = "Unknown(target_user can't create a file to target_user root folder."
+        result["result"] = False
+        result["error"] = str(e)
         return result
 
     try:
         downscope_client = get_downscope_client(opt, user_client, target_user, target_user_created_file, scopes)
     except Exception as e:
-        result["result"] = "NG"
-        result["note"]["error"] = str(e)
+        result["result_text"] = "NG"
+        result["result"] = False
+        result["error"] = str(e)
         return result
-
 
     # Retrieve past versions with downscoped clients.
     try:
         versions = downscope_client.file(target_user_created_file.id).get_previous_versions()
-        result["result"] = "SUCCESS"
+        result["result_text"] = "SUCCESS"
+        result["result"] = True
         result["note"]["previous_version"] = [v.response_object for v in versions]
     except Exception as e:
-        result["result"] = "NG"
-        result["note"]["error"] = str(e)
+        result["result_text"] = "NG"
+        result["result"] = False
+        result["error"] = str(e)
         return result
 
     assert target_user_created_file.file_version.id != upload_new_version.file_version.id

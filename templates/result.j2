@@ -9,20 +9,27 @@
   <body>
     <div class="container">
       <div class="row">
-        <div class="accordion" id="accordionPanelsStayOpen">
+        <div class="accordion accordion-flush" id="accordionPanelsStayOpen">
           {% for module in modules %}
+          {% set module__ = module.replace(".", "_") %}
           <div class="accordion-item">
-            <h1 class="accordion-header" id="panelsStayOpen-{{ module }}">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
-                {{ module }} <span class="badge bg-primary">{{ result["status"] }}</span>
+            <h2 class="accordion-header" id="heading-{{ module__ }}">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ module__ }}" aria-expanded="true" aria-controls="collapse-{{ module__ }}">
+                {{ module }}
               </button>
-            </h1>
-            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-{{ module }}">
+            </h2>
+            <div id="collapse-{{ module__ }}" class="accordion-collapse collapse show" aria-labelledby="heading-{{ module__ }}" data-bs-parent="#accordion-{{ module__ }}">
               <div class="accordion-body">
-<pre><code>{{result[module] | json_format }}</code></pre>
+                <h3>
+                  {% if result[module]["result"] %} <span class="badge rounded-pill bg-success"> {% else %} <span class="badge rounded-pill bg-danger">{% endif %}{{result[module]["result_text"]}} </span>
+                  <span>{{ module }}</span>
+                </h3>
+
+<pre><code>{{ result[module] | json_format }}</code></pre>
               </div>
             </div>
           </div>
+
           {% endfor %}
         </div>
       </div>

@@ -38,8 +38,9 @@ def test_func(opt, sa_client:Client, user_client:Client, target_user:User, test_
         target_user_created_file = creates_file_at_the_specified_client(user_client, test_folder.id)
         shared_link = target_user_created_file.create_shared_link(access="open").shared_link["url"]
     except Exception as e:
-        result["result"] = "Unknown(target_user can't create a file to target_user root folder."
-        result["note"]["error"] = str(e)
+        result["result_text"] = "Unknown(target_user can't create a file to target_user root folder."
+        result["result"] = False
+        result["error"] = str(e)
         return result
 
     assert target_user_created_file is not None
@@ -48,18 +49,21 @@ def test_func(opt, sa_client:Client, user_client:Client, target_user:User, test_
     try:
         downscope_client = get_downscope_client(opt, user_client, target_user, target_user_created_file, scopes)
     except Exception as e:
-        result["result"] = "NG"
-        result["note"]["error"] = str(e)
+        result["result_text"] = "NG"
+        result["result"] = False
+        result["error"] = str(e)
         return result
 
     # Find shared links in downscoped clients
     try:
         finded_file = downscope_client.get_shared_item(shared_link)
-        result["result"] = "SUCCESS"
+        result["result_text"] = "SUCCESS"
+        result["result"] = True
         result["note"]["file"] = finded_file.response_object
     except Exception as e:
-        result["result"] = "NG"
-        result["note"]["error"] = str(e)
+        result["result_text"] = "NG"
+        result["result"] = False
+        result["error"] = str(e)
         return result
 
     # Destroy created file

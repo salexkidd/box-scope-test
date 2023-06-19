@@ -36,15 +36,17 @@ def test_func(opt, sa_client:Client, user_client:Client, target_user:User, test_
     try:
         target_uesr_created_file = test_folder.upload("./assets/test.pdf", file_name=f"{uuid.uuid4().hex}-test.pdf")
     except Exception as e:
-        result["result"] = "Unknown(target_user can't create a file to target_user folder."
-        result["note"]["error"] = str(e)
+        result["result_text"] = "Unknown(target_user can't create a file to target_user folder."
+        result["result"] = False
+        result["error"] = str(e)
         return result
 
     try:
         downscope_client = get_downscope_client(opt, user_client, target_user, target_uesr_created_file, scopes)
     except Exception as e:
-        result["result"] = "NG"
-        result["note"]["error"] = str(e)
+        result["result_text"] = "NG"
+        result["result"] = False
+        result["error"] = str(e)
         return result
 
 
@@ -52,11 +54,13 @@ def test_func(opt, sa_client:Client, user_client:Client, target_user:User, test_
     try:
         rep_hints = '[pdf][extracted_text]'
         representation = downscope_client.file(target_uesr_created_file.id).get_representation_info(rep_hints)
-        result["result"] = "SUCCESS"
+        result["result_text"] = "SUCCESS"
+        result["result"] = True
         result["note"]["representation"] = representation
     except Exception as e:
-        result["result"] = "NG"
-        result["note"]["error"] = str(e)
+        result["result_text"] = "NG"
+        result["error"] = str(e)
+        result["result"] = False
         return result
 
 

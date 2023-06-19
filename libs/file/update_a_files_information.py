@@ -35,26 +35,26 @@ def test_func(opt, sa_client, user_client, target_user, test_folder, scopes):
     try:
         target_user_created_file = creates_file_at_the_specified_client(user_client, test_folder.id)
     except Exception as e:
-        result["result"] = "Unknown(target_user can't create a file to target_user test folder."
-        result["note"]["error"] = str(e)
+        result["result_text"] = "Unknown(target_user can't create a file to target_user test folder."
+        result["error"] = str(e)
         return result
 
     # Get downscope client
     try:
         downscope_client = get_downscope_client(opt, user_client, target_user, target_user_created_file, scopes)
     except Exception as e:
-        result["result"] = "NG"
-        result["note"]["error"] = str(e)
+        result["result_text"] = "NG"
+        result["error"] = str(e)
         return result
 
     # Update file information on the downscoped client.
     try:
         file_info = downscope_client.file(target_user_created_file.id).update_info(data={"description": "Update a file info"})
-        result["result"] = "SUCCESS"
+        result["result_text"] = "SUCCESS"
         result["note"]["information"] = file_info.response_object
     except Exception as e:
-        result["result"] = "NG"
-        result["note"]["error"] = str(e)
+        result["result_text"] = "NG"
+        result["error"] = str(e)
         return result
 
     file_info.description == "Update a file info"

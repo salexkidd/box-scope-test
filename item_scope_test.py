@@ -9,12 +9,13 @@ Options:
   --scopes=<SCOPES>                 Scopes
   --tests=<TESTS>                    tests
 """
+import json
 import sys
-from datetime import datetime
 
 from docopt import docopt
+from jinja2 import Environment, FileSystemLoader, Template
 from loguru import logger
-import json
+
 from libs import get_auth, get_client, get_target_user, load_test_modules
 
 
@@ -75,11 +76,10 @@ def main(opt):
         "modules": [],
     }
     for m in modules:
-        module_name = m.__name__.replace(".", "_")
+        module_name = m.__name__
         rendering_params["result"][module_name] = m.test_func(opt, sa_client, user_client, target_user, test_folder, scopes)
         rendering_params["modules"].append(module_name)
 
-    from jinja2 import Template, Environment, FileSystemLoader
     env = Environment(loader=FileSystemLoader('./templates', encoding='utf8'))
     env.filters['json_format'] = json_format
     tmpl = env.get_template('result.j2')
